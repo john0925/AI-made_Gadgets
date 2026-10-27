@@ -52,6 +52,13 @@ Latest result: build succeeded; 9/9 tests passed. NuGet may issue `NU1900` when 
 - The installer registers `MinimalMarkdownReader.Markdown` for `.md` and `.markdown`, including its default icon and open command.
 - Release build and 9/9 xUnit tests passed. The self-contained Windows x64 installer is `artifacts/installer/MinimalMarkdownReader-Setup-1.0.2.exe` (54,208,579 bytes; SHA-256 `65A763AA7386BB90C7AF2C05CD640E441669D4050CB0E6D8CB3C0044779F6D1B`).
 
+## v1.0.3 — 2026-10-27
+
+- Theme colors are defined once in `Models/ThemePalettes.cs`; the WebView2 shell, `CustomColors` defaults, and theme validation all read from it. Colors are unchanged.
+- Removed the stale `MarkdownReader.sln`, updated `AGENTS.md` paths, and added `CLAUDE.md` and `.gitignore`.
+- Published to GitHub as `MinimalMarkdownReader/` in `john0925/AI-made_Gadgets`; installers are distributed through GitHub Releases (tag `MinimalMarkdownReader-v<version>`).
+- Release build and 11/11 xUnit tests passed. The self-contained Windows x64 installer is `MinimalMarkdownReader-Setup-1.0.3.exe` (54,182,416 bytes; SHA-256 `316C413091237DCF13B1AB8B392806DEEE8C8484B39FA09233A5E62F4F223085`). Interactive WebView2 checks were not run for this build.
+
 ### Future version starting points
 
 - Add further UI languages by creating `Resources/Strings.<culture>.resx` and adding the culture to `LocalizationService` and the language menu.
