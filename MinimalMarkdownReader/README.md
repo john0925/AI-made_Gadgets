@@ -37,11 +37,13 @@ dotnet publish src/MinimalMarkdownReader/MinimalMarkdownReader.csproj -c Release
 
 ### 安裝檔
 
-已提供自帶 .NET 10 執行階段的 Windows x64 安裝檔：`artifacts/installer/MinimalMarkdownReader-Setup-1.0.2.exe`。執行安裝檔後，程式會安裝至目前使用者的 AppData，並建立開始功能表捷徑；可在安裝過程選擇是否建立桌面捷徑。仍需要 Microsoft Edge WebView2 Runtime。
+安裝檔不包含在原始碼中，會透過 [GitHub Releases](https://github.com/john0925/AI-made_Gadgets/releases) 發布（檔名格式為 `MinimalMarkdownReader-Setup-<版本>.exe`）。若 Releases 尚未提供，可依下方步驟自行建置。
+
+安裝檔為自帶 .NET 10 執行階段的 Windows x64 版本。執行後，程式會安裝至目前使用者的 AppData，並建立開始功能表捷徑；可在安裝過程選擇是否建立桌面捷徑。仍需要 Microsoft Edge WebView2 Runtime。
 
 安裝程式會註冊 `.md`、`.markdown` 的檔案類型與 MinimalMarkdownReader 圖示。安裝後可將其設為預設開啟程式；雙擊檔案時，程式會載入 Windows 傳入的文件路徑。
 
-若需重建安裝檔，先安裝 Inno Setup 6，然後執行：
+若需自行建置安裝檔，先安裝 Inno Setup 6，然後在 `MinimalMarkdownReader` 資料夾執行下列指令；產出的安裝檔位於 `artifacts/installer/`（此資料夾已被 `.gitignore` 排除）：
 
 ```powershell
 dotnet restore MinimalMarkdownReader.sln --runtime win-x64
