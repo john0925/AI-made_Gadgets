@@ -1,0 +1,46 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+*.binlog
+
+# Publish output and installers (attach installers to GitHub Releases instead)
+artifacts/
+publish/
+*.exe
+
+# Leftover intermediate output inside project folders
+src/**/artifacts/
+tests/**/artifacts/
+
+# Visual Studio / VS Code / Rider
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.rsuser
+
+# Test results and coverage
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+coverage*.xml
+*.coverage
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log

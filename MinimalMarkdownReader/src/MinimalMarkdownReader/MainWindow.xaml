@@ -1,0 +1,69 @@
+<Window x:Class="MinimalMarkdownReader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="MinimalMarkdownReader" Width="1180" Height="780" MinWidth="780" MinHeight="520"
+        AllowDrop="True" DragOver="Window_DragOver" Drop="Window_Drop" PreviewKeyDown="Window_PreviewKeyDown"
+        Loaded="Window_Loaded" Closing="Window_Closing">
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="12,9" Background="#F2F2F2" BorderBrush="#D5D5D5" BorderThickness="0,0,0,1">
+            <WrapPanel VerticalAlignment="Center">
+                <Button x:Name="MenuButton" Content="☰" ToolTip="顯示選單" Click="MenuButton_Click" FontSize="20" Padding="8,0" Margin="0,0,14,0">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem x:Name="MenuOpenDocumentItem" Header="開啟文件" Click="OpenDocument_Click" />
+                            <MenuItem x:Name="MenuLanguageItem" Header="切換語系">
+                                <MenuItem x:Name="MenuTraditionalChineseItem" Header="繁體中文" Tag="zh-Hant" Click="LanguageMenuItem_Click" />
+                                <MenuItem x:Name="MenuEnglishItem" Header="English" Tag="en" Click="LanguageMenuItem_Click" />
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem x:Name="MenuAboutItem" Header="關於" Click="AboutMenuItem_Click" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <TextBlock x:Name="TextAlignmentLabel" Text="文字對齊" VerticalAlignment="Center" Margin="0,0,5,0" />
+                <Button x:Name="AlignLeftButton" ToolTip="靠左" Click="AlignLeft_Click" Padding="7,4" Margin="0,0,3,0">
+                    <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="12" Height="2.4" Background="#1E365B" CornerRadius="1.2"/><Border Width="18" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Top="4.5"/><Border Width="12" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Top="9"/><Border Width="18" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Top="13.5"/></Canvas></Viewbox>
+                </Button>
+                <Button x:Name="AlignCenterButton" ToolTip="置中" Click="AlignCenter_Click" Padding="7,4" Margin="0,0,3,0">
+                    <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="12" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Left="3"/><Border Width="18" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Top="4.5"/><Border Width="12" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Left="3" Canvas.Top="9"/><Border Width="18" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Top="13.5"/></Canvas></Viewbox>
+                </Button>
+                <Button x:Name="AlignRightButton" ToolTip="靠右" Click="AlignRight_Click" Padding="7,4" Margin="0,0,14,0">
+                    <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="12" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Left="6"/><Border Width="18" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Top="4.5"/><Border Width="12" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Left="6" Canvas.Top="9"/><Border Width="18" Height="2.4" Background="#1E365B" CornerRadius="1.2" Canvas.Top="13.5"/></Canvas></Viewbox>
+                </Button>
+                <TextBlock x:Name="FontLabel" Text="字型" VerticalAlignment="Center" Margin="0,0,5,0" />
+                <ComboBox x:Name="FontFamilyCombo" Width="175" SelectionChanged="SettingsControl_Changed" Margin="0,0,10,0" />
+                <TextBlock x:Name="FontSizeLabel" Text="字級" VerticalAlignment="Center" Margin="0,0,5,0" />
+                <Slider x:Name="FontSizeSlider" Width="95" Minimum="12" Maximum="36" ValueChanged="SettingsControl_Changed" />
+                <TextBlock x:Name="FontSizeText" Width="30" VerticalAlignment="Center" TextAlignment="Center" Margin="2,0,10,0" />
+                <TextBlock x:Name="LineHeightLabel" Text="行距" VerticalAlignment="Center" Margin="0,0,5,0" />
+                <Slider x:Name="LineHeightSlider" Width="85" Minimum="1.2" Maximum="2.5" SmallChange="0.1" ValueChanged="SettingsControl_Changed" />
+                <TextBlock x:Name="LineHeightText" Width="32" VerticalAlignment="Center" TextAlignment="Center" Margin="2,0,10,0" />
+                <TextBlock x:Name="ThemeLabel" Text="主題" VerticalAlignment="Center" Margin="0,0,5,0" />
+                <ComboBox x:Name="ThemeCombo" Width="88" SelectionChanged="SettingsControl_Changed">
+                    <ComboBoxItem x:Name="ThemeSoftItem" Tag="soft">柔和</ComboBoxItem><ComboBoxItem x:Name="ThemeEyeItem" Tag="eye">護眼</ComboBoxItem><ComboBoxItem x:Name="ThemeLightItem" Tag="light">明亮</ComboBoxItem><ComboBoxItem x:Name="ThemeDarkItem" Tag="dark">深色</ComboBoxItem><ComboBoxItem x:Name="ThemeCustomItem" Tag="custom">自訂</ComboBoxItem>
+                </ComboBox>
+            </WrapPanel>
+        </Border>
+        <Border x:Name="CustomColorPanel" DockPanel.Dock="Top" Padding="10,6" Background="#FAFAFA" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Visibility="Collapsed">
+            <WrapPanel>
+                <TextBlock x:Name="BackgroundColorLabel" Text="背景顏色" VerticalAlignment="Center" Margin="0,0,4,0" />
+                <Button x:Name="BackgroundColorButton" Content="#F3E9D6" Click="BackgroundColor_Click" Padding="8,3" Margin="0,0,10,0" />
+                <TextBlock x:Name="DocumentColorLabel" Text="文字顏色" VerticalAlignment="Center" Margin="0,0,4,0" />
+                <Button x:Name="TextColorButton" Content="#352B23" Click="TextColor_Click" Padding="8,3" Margin="0,0,6,0" />
+                <Button x:Name="RestoreDefaultsButton" Content="恢復預設" Click="RestoreDefaults_Click" Padding="8,3" />
+            </WrapPanel>
+        </Border>
+        <Border DockPanel.Dock="Bottom" Padding="9,5" Background="#F2F2F2" BorderBrush="#D5D5D5" BorderThickness="0,1,0,0">
+            <TextBlock x:Name="StatusText" Text="尚未開啟文件" TextTrimming="CharacterEllipsis" />
+        </Border>
+        <Grid>
+            <wv2:WebView2 x:Name="ReaderWebView" Visibility="Collapsed" />
+            <StackPanel x:Name="WelcomePanel" HorizontalAlignment="Center" VerticalAlignment="Center" Width="500">
+                <TextBlock Text="MinimalMarkdownReader" FontSize="28" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                <TextBlock x:Name="WelcomeInstructionText" Text="開啟一份 UTF-8 Markdown 文件開始閱讀。也可以將 .md 文件拖放到此視窗。" TextAlignment="Center" TextWrapping="Wrap" Margin="0,12,0,16" />
+                <Button x:Name="WelcomeOpenButton" Content="開啟 Markdown 文件" Click="OpenDocument_Click" Padding="18,8" HorizontalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>

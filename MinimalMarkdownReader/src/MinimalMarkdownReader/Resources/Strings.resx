@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Menu" xml:space="preserve"><value>Show menu</value></data>
+  <data name="OpenDocument" xml:space="preserve"><value>Open document</value></data>
+  <data name="ChangeLanguage" xml:space="preserve"><value>Language</value></data>
+  <data name="TraditionalChinese" xml:space="preserve"><value>繁體中文</value></data>
+  <data name="English" xml:space="preserve"><value>English</value></data>
+  <data name="About" xml:space="preserve"><value>About</value></data>
+  <data name="AboutMessage" xml:space="preserve"><value>MinimalMarkdownReader\nA simple, read-only Markdown viewer.</value></data>
+  <data name="AboutFileUnavailable" xml:space="preserve"><value>about.md could not be read.</value></data>
+  <data name="TextAlignment" xml:space="preserve"><value>Alignment</value></data>
+  <data name="AlignLeft" xml:space="preserve"><value>Left</value></data>
+  <data name="AlignCenter" xml:space="preserve"><value>Center</value></data>
+  <data name="AlignRight" xml:space="preserve"><value>Right</value></data>
+  <data name="Font" xml:space="preserve"><value>Font</value></data>
+  <data name="FontSize" xml:space="preserve"><value>Size</value></data>
+  <data name="LineHeight" xml:space="preserve"><value>Line height</value></data>
+  <data name="Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="ThemeSoft" xml:space="preserve"><value>Soft</value></data>
+  <data name="ThemeEye" xml:space="preserve"><value>Eye care</value></data>
+  <data name="ThemeLight" xml:space="preserve"><value>Light</value></data>
+  <data name="ThemeDark" xml:space="preserve"><value>Dark</value></data>
+  <data name="ThemeCustom" xml:space="preserve"><value>Custom</value></data>
+  <data name="BackgroundColor" xml:space="preserve"><value>Background color</value></data>
+  <data name="DocumentColor" xml:space="preserve"><value>Text color</value></data>
+  <data name="RestoreDefaults" xml:space="preserve"><value>Restore defaults</value></data>
+  <data name="NoDocument" xml:space="preserve"><value>No document open</value></data>
+  <data name="WelcomeInstruction" xml:space="preserve"><value>Open a UTF-8 Markdown document to start reading. You can also drag a .md file into this window.</value></data>
+  <data name="OpenMarkdownDocument" xml:space="preserve"><value>Open Markdown document</value></data>
+  <data name="FileDialogFilter" xml:space="preserve"><value>Markdown documents|*.md;*.markdown</value></data>
+  <data name="ReaderInitializing" xml:space="preserve"><value>Reader is still initializing.</value></data>
+  <data name="ReadingDocument" xml:space="preserve"><value>Reading: {0}</value></data>
+  <data name="OpenFailed" xml:space="preserve"><value>Failed to open document.</value></data>
+  <data name="OpenFailedTitle" xml:space="preserve"><value>Cannot open document</value></data>
+  <data name="WebViewInitializationFailed" xml:space="preserve"><value>WebView2 initialization failed: {0}</value></data>
+  <data name="SaveSettingsFailed" xml:space="preserve"><value>Could not save settings: {0}</value></data>
+  <data name="SaveSettingsTitle" xml:space="preserve"><value>MinimalMarkdownReader</value></data>
+  <data name="InvalidSettings" xml:space="preserve"><value>Reading settings contain unsupported values.</value></data>
+  <data name="InvalidFileType" xml:space="preserve"><value>Select a .md or .markdown document.</value></data>
+  <data name="FileNotFound" xml:space="preserve"><value>The Markdown document was not found.</value></data>
+  <data name="InvalidEncoding" xml:space="preserve"><value>The document is not valid UTF-8.</value></data>
+  <data name="BlockedImage" xml:space="preserve"><value>[Image not loaded]</value></data>
+  <data name="WebViewNavigationFailed" xml:space="preserve"><value>WebView2 could not display the document: {0}</value></data>
+</root>
