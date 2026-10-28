@@ -58,6 +58,17 @@ Latest result: build succeeded; 9/9 tests passed. NuGet may issue `NU1900` when 
 - Removed the stale `MarkdownReader.sln`, updated `AGENTS.md` paths, and added `CLAUDE.md` and `.gitignore`.
 - Published to GitHub as `MinimalMarkdownReader/` in `john0925/AI-made_Gadgets`; installers are distributed through GitHub Releases (tag `MinimalMarkdownReader-v<version>`).
 - Release build and 11/11 xUnit tests passed. The self-contained Windows x64 installer is `MinimalMarkdownReader-Setup-1.0.3.exe` (54,182,416 bytes; SHA-256 `316C413091237DCF13B1AB8B392806DEEE8C8484B39FA09233A5E62F4F223085`). Interactive WebView2 checks were not run for this build.
+- **Not released:** a security review found that this build lets Markdown run script (see v1.0.4). The tag `MinimalMarkdownReader-v1.0.3` exists, but its installer must not be distributed.
+
+## v1.0.4 — 2026-10-28
+
+Security release. Markdown documents could run JavaScript and load remote content in the reader.
+
+- The Markdig pipeline lists extensions explicitly instead of `UseAdvancedExtensions()`. GenericAttributes (`{onload=...}`, `{style=...}`) and MediaLinks (remote YouTube iframes and `<video>`) are no longer enabled.
+- The reader page is built by `Services/ReaderPage.cs` with a restrictive CSP. `script-src` allows only the page's own inline script by SHA-256 hash, so event-handler attributes, remote resources, frames and media are blocked.
+- `ReaderService` blocks every network or file request except images from `markdown.localhost`. Only the reader's own `NavigateToString` load may navigate; frame navigations, downloads and external URI schemes are cancelled; autofill and password saving are off. Canceled navigations no longer show a "navigation failed" status.
+- Added `samples/security-test.md` and regression tests (31/31 passing). The user manually verified with `dotnet run` that settings still apply live, the security sample triggers nothing, and relative images still load.
+- The self-contained Windows x64 installer is `MinimalMarkdownReader-Setup-1.0.4.exe` (54,184,677 bytes; SHA-256 `A1AE756CDDAF40D8020EBAA299623B82AA720F55F4BA50E55D860AB94A512054`).
 
 ### Future version starting points
 

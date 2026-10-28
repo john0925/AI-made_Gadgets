@@ -53,8 +53,8 @@ dotnet publish src/MinimalMarkdownReader/MinimalMarkdownReader.csproj -c Release
 
 ## 安全與限制
 
-Markdown 原始 HTML 已停用；文件內的 JavaScript、iframe、`javascript:` URI、遠端圖片與未允許的本機圖片都不會載入。程式不提供編輯、目錄、多分頁、搜尋、列印、PDF 匯出、雲端同步或 Mermaid。設定檔格式錯誤時會安全地改用預設值。
+Markdown 原始 HTML 已停用，`{...}` 自訂屬性與影片／YouTube 嵌入擴充也未啟用；文件內的 JavaScript、事件屬性、iframe、影音、`javascript:` URI、遠端圖片與未允許的本機圖片都不會載入。閱讀頁面另有內容安全政策（CSP），並由程式攔截所有網路請求，只允許讀取文件資料夾內的圖片；下載與外部協定啟動一律封鎖。程式不提供編輯、目錄、多分頁、搜尋、列印、PDF 匯出、雲端同步或 Mermaid。設定檔格式錯誤時會安全地改用預設值。
 
 ## 已驗證
 
-2026-10-22 已在 Windows 上執行：`dotnet restore MinimalMarkdownReader.sln`、`dotnet build MinimalMarkdownReader.sln --no-restore --configuration Debug`、`dotnet test MinimalMarkdownReader.sln --no-build --configuration Debug`；9 個單元測試全數通過。尚未以互動方式手動驗證 WebView2 視窗和發布後執行檔，請依 [測試計畫](docs/TEST_PLAN.md) 完成檢查。
+2026-10-28 已在 Windows 上執行：`dotnet build MinimalMarkdownReader.sln --configuration Debug`、`dotnet test MinimalMarkdownReader.sln --no-build --configuration Debug`；31 個單元測試全數通過，並以 `dotnet run` 手動驗證設定套用、資安測試文件與相對圖片。發布後的安裝檔尚未逐項手動驗證，請依 [測試計畫](docs/TEST_PLAN.md) 完成檢查。

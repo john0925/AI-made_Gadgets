@@ -8,7 +8,26 @@ public sealed class MarkdownService
 {
     private static readonly Regex ImagePattern = new("<img(?<before>[^>]*?)src=\"(?<src>[^\"]*)\"(?<after>[^>]*)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex LinkPattern = new("<a(?<before>[^>]*?)href=\"(?<href>[^\"]*)\"(?<after>[^>]*)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().DisableHtml().Build();
+    // UseAdvancedExtensions() minus GenericAttributes (arbitrary attributes such as onload/style) and MediaLinks (remote iframe/video).
+    private readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
+        .UseAbbreviations()
+        .UseAutoIdentifiers()
+        .UseCitations()
+        .UseCustomContainers()
+        .UseDefinitionLists()
+        .UseEmphasisExtras()
+        .UseFigures()
+        .UseFooters()
+        .UseFootnotes()
+        .UseGridTables()
+        .UseMathematics()
+        .UsePipeTables()
+        .UseListExtras()
+        .UseTaskLists()
+        .UseDiagrams()
+        .UseAutoLinks()
+        .DisableHtml()
+        .Build();
 
     public string ToSafeHtml(MarkdownDocument document, DocumentService documentService)
     {
@@ -18,7 +37,7 @@ public sealed class MarkdownService
             var source = WebUtility.HtmlDecode(match.Groups["src"].Value);
             if (!documentService.TryResolveRelativeImage(document, source, out var imagePath)) return $"<span class=\"blocked-resource\">{WebUtility.HtmlEncode(LocalizationService.Instance.Get("BlockedImage"))}</span>";
             var safePath = string.Join('/', imagePath.Split('/').Select(Uri.EscapeDataString));
-            return $"<img{match.Groups["before"].Value}src=\"https://markdown.localhost/{safePath}\"{match.Groups["after"].Value}>";
+            return $"<img{match.Groups["before"].Value}src=\"https://{ReaderPage.VirtualHost}/{safePath}\"{match.Groups["after"].Value}>";
         });
         return LinkPattern.Replace(html, match =>
         {

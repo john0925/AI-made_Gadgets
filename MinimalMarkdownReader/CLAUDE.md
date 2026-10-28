@@ -39,10 +39,10 @@ How a document is displayed:
 2. `MarkdownService.ToSafeHtml` runs Markdig with `UseAdvancedExtensions().DisableHtml()`. It then rewrites `<img>`/`<a>` tags with regexes:
    - Images go through `DocumentService.TryResolveRelativeImage`, which allows only existing raster files inside the document folder. Allowed images are rewritten to `https://markdown.localhost/...`; any other image becomes a localized "blocked" span.
    - Links that are not http(s) are reduced to a bare `<a>`.
-3. `ReaderService.ShowDocument` maps the virtual host `markdown.localhost` to the document's folder, then calls `NavigateToString` with an HTML shell. The shell's CSS and JS are inline strings in `ReaderService.HtmlShell`; there are no separate resource files. After navigation completes, settings are pushed in through `window.reader.applySettings(json)`.
-4. `ReaderService` intercepts navigation and new-window requests. It opens http(s) URLs in the default browser and blocks everything else.
+3. `ReaderService.ShowDocument` maps the virtual host `markdown.localhost` to the document's folder, then calls `NavigateToString` with an HTML shell. The shell is built by `ReaderPage.Build` (no WebView2 dependency, so it is unit-tested). It carries a CSP whose `script-src` is the SHA-256 of the page's single inline script, so editing that script automatically updates the hash; never add `'unsafe-inline'` to `script-src`. After navigation completes, settings are pushed in through `window.reader.applySettings(json)` via `ExecuteScriptAsync`.
+4. `ReaderService` locks the WebView down: `WebResourceRequested` blocks every network/file request except images from `markdown.localhost` (`ReaderPage.IsAllowedResource`); only the reader's own `NavigateToString` load may navigate the page, and other http(s) navigations or new windows open in the default browser; frame navigations, downloads and external URI schemes are cancelled.
 
-Changing a setting does not re-render the document. `ApplySettingsAsync` only updates CSS variables through script. All theme colors are defined only in `Models/ThemePalettes.cs`. The JS palettes in `HtmlShell`, the CSS default variables, the `CustomColors` defaults and the theme validation all read from it. To add a theme, add one entry there plus a menu item in `MainWindow.xaml` and a localized string.
+Changing a setting does not re-render the document. `ApplySettingsAsync` only updates CSS variables through script. All theme colors are defined only in `Models/ThemePalettes.cs`. The JS palettes in `ReaderPage`, the CSS default variables, the `CustomColors` defaults and the theme validation all read from it. To add a theme, add one entry there plus a menu item in `MainWindow.xaml` and a localized string.
 
 Settings:
 - `SettingsService` reads and writes `%LOCALAPPDATA%\MinimalMarkdownReader\settings.json` atomically (it writes a temp file, then moves it).
@@ -60,7 +60,7 @@ Localization:
 
 ## Constraints
 
-- Treat Markdown as untrusted. Raw HTML stays disabled; scripts, iframes, `javascript:` URIs, remote images and images outside the document folder must not load. Tests in `tests/MinimalMarkdownReader.Tests/` cover these rules, so extend them when you touch `MarkdownService`, `DocumentService` or `SettingsService`.
+- Treat Markdown as untrusted. Raw HTML stays disabled, and the Markdig pipeline lists extensions explicitly: do not switch back to `UseAdvancedExtensions()` or add `UseGenericAttributes()`/`UseMediaLinks()`, which emit event-handler attributes and remote iframes; scripts, iframes, `javascript:` URIs, remote images and images outside the document folder must not load. Tests in `tests/MinimalMarkdownReader.Tests/` cover these rules, so extend them when you touch `MarkdownService`, `DocumentService` or `SettingsService`.
 - Keep the app to one document and read-only unless a version explicitly changes that scope. Search, print/PDF, syntax highlighting and similar features are listed only as possible future work.
 - In `MainWindow.xaml`, the reading `Grid` must stay the last child of the `DockPanel`. Otherwise the status bar covers the WebView2.
 - `about.md` is copied next to the executable at build and publish time, and the About dialog reads it.
