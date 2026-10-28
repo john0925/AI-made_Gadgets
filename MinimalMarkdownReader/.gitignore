@@ -44,3 +44,7 @@ Desktop.ini
 # Temporary files
 *.tmp
 *.log
+
+# Local-only notes (not published)
+/CLAUDE.md
+/history.md
