@@ -19,4 +19,22 @@ public sealed class LocalizationServiceTests
         localization.SetLanguage("en");
         Assert.Equal("Open document", localization.Get("OpenDocument"));
     }
+
+    [Theory]
+    [InlineData("en", "Version")]
+    [InlineData("zh-Hant", "版本")]
+    [InlineData("fr", "版本")]
+    public void ReadLocalizedResource_PicksLanguageAndFallsBackToDefault(string language, string expectedText)
+    {
+        var content = LocalizationService.ReadLocalizedResource("about", ".md", language);
+        Assert.NotNull(content);
+        Assert.Contains(expectedText, content);
+        Assert.Contains("https://github.com/john0925/AI-made_Gadgets", content);
+    }
+
+    [Fact]
+    public void ReadLocalizedResource_MissingResourceReturnsNull()
+    {
+        Assert.Null(LocalizationService.ReadLocalizedResource("missing", ".md", "en"));
+    }
 }

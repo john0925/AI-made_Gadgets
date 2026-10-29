@@ -28,7 +28,7 @@ dotnet test MinimalMarkdownReader.sln --configuration Debug
 5. 切換四種主題、自訂背景／本文色及恢復預設。
 6. 檢查相對圖片、缺少圖片、長程式碼、長文件捲動與繁體中文內容。
 7. 點擊 HTTP(S) 連結，確認由預設瀏覽器開啟；確認惡意 HTML、`javascript:` 連結、遠端圖片與跳脫資料夾的圖片不會執行或載入。
-8. 點擊三橫線選單，確認可開啟文件、切換繁體中文／English、查看關於資訊；切換後所有應用程式 UI 文字立即更新，重啟後維持選擇。
+8. 點擊三橫線選單，確認可開啟文件、切換繁體中文／English、查看關於資訊；切換後所有應用程式 UI 文字立即更新，重啟後維持選擇。「關於」在繁體中文下顯示中文版、在 English 下顯示英文版，且皆含 GitHub 連結與正確版本號。
 9. 開啟 `samples/security-test.md`：確認沒有任何對話框、預設瀏覽器不會自動開啟、YouTube／影片沒有嵌入，`{...}` 只以純文字顯示。
 10. 開啟文件後調整主題、字型、字級、行距與對齊，確認在 CSP 下設定仍會即時套用（`ExecuteScriptAsync` 呼叫 `window.reader.applySettings`）。
 

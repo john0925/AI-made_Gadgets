@@ -130,18 +130,13 @@ public partial class MainWindow : Window
         ApplyAndQueueSave();
     }
 
-    private async void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+    private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            var aboutPath = Path.Combine(AppContext.BaseDirectory, "about.md");
-            var content = await File.ReadAllTextAsync(aboutPath);
-            MessageBox.Show(this, content, _localization.Get("About"), MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-        catch (IOException)
-        {
+        var content = LocalizationService.ReadLocalizedResource("about", ".md", _localization.CurrentLanguage);
+        if (content is null)
             MessageBox.Show(this, _localization.Get("AboutFileUnavailable"), _localization.Get("About"), MessageBoxButton.OK, MessageBoxImage.Warning);
-        }
+        else
+            MessageBox.Show(this, content, _localization.Get("About"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private void AlignLeft_Click(object sender, RoutedEventArgs e) => UpdateAlignment("left");

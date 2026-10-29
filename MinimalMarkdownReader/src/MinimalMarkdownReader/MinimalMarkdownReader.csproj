@@ -13,6 +13,9 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="about.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- Embedded rather than copied beside the exe, so the About text and its links cannot be edited as a loose file. -->
+    <None Remove="about*.md" />
+    <!-- WithCulture=false keeps about.en.md in the main assembly instead of an "en" satellite assembly. -->
+    <EmbeddedResource Include="about*.md" LogicalName="MinimalMarkdownReader.%(Filename)%(Extension)" WithCulture="false" />
   </ItemGroup>
 </Project>
