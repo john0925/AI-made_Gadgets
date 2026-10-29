@@ -136,7 +136,7 @@ public partial class MainWindow : Window
         if (content is null)
             MessageBox.Show(this, _localization.Get("AboutFileUnavailable"), _localization.Get("About"), MessageBoxButton.OK, MessageBoxImage.Warning);
         else
-            MessageBox.Show(this, content, _localization.Get("About"), MessageBoxButton.OK, MessageBoxImage.Information);
+            new AboutWindow(_localization.Get("About"), content, _localization.Get("Close")) { Owner = this }.ShowDialog();
     }
 
     private void AlignLeft_Click(object sender, RoutedEventArgs e) => UpdateAlignment("left");

@@ -9,7 +9,7 @@ MinimalMarkdownReader 是 Windows 10/11 x64 的單一文件、唯讀 Markdown �
 - 支援自訂背景色與本文色，並保存全域閱讀偏好至 `%LOCALAPPDATA%\MinimalMarkdownReader\settings.json`。首次啟動時會讀取舊版 MarkdownReader 的設定檔。
 - 顯示文件目錄內的相對 PNG、JPG、GIF、WebP、BMP 圖片；限制圖片不得跳脫文件目錄。
 - 外部 HTTP(S) 連結會交給預設瀏覽器開啟。
-- 點擊工具列的三橫線選單可開啟文件、切換繁體中文／English，以及查看關於資訊（依介面語言顯示繁體中文或英文，含 GitHub 專案與下載連結）。語言選擇會保存並在下次啟動時套用。
+- 點擊工具列的三橫線選單可開啟文件、切換繁體中文／English，以及查看關於資訊（依介面語言顯示繁體中文或英文，含可點擊的 GitHub 專案與下載連結）。語言選擇會保存並在下次啟動時套用。
 
 ## 需求與執行
 

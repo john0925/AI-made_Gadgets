@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.Json;
 using MinimalMarkdownReader.Models;
 using Microsoft.Web.WebView2.Core;
@@ -47,14 +46,6 @@ public sealed class ReaderService
     public Task ApplySettingsAsync(ReaderSettings settings) => _webView.ExecuteScriptAsync(
         "window.reader.applySettings(" + JsonSerializer.Serialize(settings, ReaderPage.ScriptJsonOptions) + ");");
 
-    private static void OpenExternal(Uri uri)
-    {
-        try { Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true }); } catch { }
-    }
-
-    private static bool IsWebUri(string value, out Uri uri) =>
-        Uri.TryCreate(value, UriKind.Absolute, out uri!) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
-
     private void OnWebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs e)
     {
         if (ReaderPage.IsAllowedResource(e.Request.Uri, e.ResourceContext == CoreWebView2WebResourceContext.Image)) return;
@@ -70,12 +61,12 @@ public sealed class ReaderService
             return;
         }
         e.Cancel = true;
-        if (IsWebUri(e.Uri, out var uri)) OpenExternal(uri);
+        if (ExternalLinks.TryGetWebUri(e.Uri, out var uri)) ExternalLinks.Open(uri);
     }
 
     private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
     {
-        if (IsWebUri(e.Uri, out var uri)) OpenExternal(uri);
+        if (ExternalLinks.TryGetWebUri(e.Uri, out var uri)) ExternalLinks.Open(uri);
         e.Handled = true;
     }
 

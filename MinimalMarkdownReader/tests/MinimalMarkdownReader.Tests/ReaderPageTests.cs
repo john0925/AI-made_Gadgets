@@ -26,6 +26,17 @@ public sealed class ReaderPageTests
         Assert.Contains($"script-src 'sha256-{hash}'", ReaderPage.ContentSecurityPolicy);
     }
 
+    [Fact]
+    public void Build_AppliesAlignmentToWholeDocumentExceptCode()
+    {
+        var html = ReaderPage.Build("<p>body</p>");
+        Assert.Contains("main{text-align:var(--align)}", html);
+        Assert.Contains("[data-align=right] table{margin-left:auto}", html);
+        Assert.Contains("[data-align=right] :is(ul,ol){list-style-position:inside", html.Replace("[data-align=center] :is(ul,ol),", ""));
+        Assert.Contains("r.dataset.align=s.textAlign", html);
+        Assert.Matches("pre\\{[^}]*text-align:left", html);
+    }
+
     [Theory]
     [InlineData("https://markdown.localhost/images/a.png", true, true)]
     [InlineData("https://markdown.localhost/notes.txt", false, false)]
