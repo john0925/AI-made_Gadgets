@@ -32,7 +32,15 @@ dotnet test MinimalMarkdownReader.sln --configuration Debug
 9. 開啟 `samples/security-test.md`：確認沒有任何對話框、預設瀏覽器不會自動開啟、YouTube／影片沒有嵌入，`{...}` 只以純文字顯示。
 10. 開啟文件後調整主題、字型、字級、行距與對齊，確認在 CSP 下設定仍會即時套用（`ExecuteScriptAsync` 呼叫 `window.reader.applySettings`）。
 
-## 本次結果（2026-10-29，1.0.5）
+## 本次結果（2026-10-29，1.0.6）
+
+- `dotnet build MinimalMarkdownReader.sln --no-restore --configuration Debug`：通過，0 警告 0 錯誤。
+- `dotnet test MinimalMarkdownReader.sln --no-build --configuration Debug`：通過，49/49。
+- 以實際 WebView2 擷取三種對齊的畫面：清單、表格、引用皆跟隨對齊，程式碼維持靠左；CSP 下設定可正常套用。
+- 手動檢查（使用者於 Visual Studio 執行）：「關於」視窗中英文內容與連結、三種對齊的版面，皆通過。
+- 發布輸出不含獨立的 `about*.md`；內嵌的 about 版本為 1.0.6。
+
+## 前次結果（2026-10-29，1.0.5）
 
 - `dotnet build MinimalMarkdownReader.sln --no-restore --configuration Debug`：通過，0 警告 0 錯誤。
 - `dotnet test MinimalMarkdownReader.sln --no-build --configuration Debug`：通過，35/35。
