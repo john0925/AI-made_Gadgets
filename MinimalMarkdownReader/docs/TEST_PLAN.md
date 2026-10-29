@@ -32,7 +32,14 @@ dotnet test MinimalMarkdownReader.sln --configuration Debug
 9. 開啟 `samples/security-test.md`：確認沒有任何對話框、預設瀏覽器不會自動開啟、YouTube／影片沒有嵌入，`{...}` 只以純文字顯示。
 10. 開啟文件後調整主題、字型、字級、行距與對齊，確認在 CSP 下設定仍會即時套用（`ExecuteScriptAsync` 呼叫 `window.reader.applySettings`）。
 
-## 本次結果（2026-10-28，資安修正）
+## 本次結果（2026-10-29，1.0.5）
+
+- `dotnet build MinimalMarkdownReader.sln --no-restore --configuration Debug`：通過，0 警告 0 錯誤。
+- `dotnet test MinimalMarkdownReader.sln --no-build --configuration Debug`：通過，35/35。
+- 發布輸出不含獨立的 `about*.md`；`MinimalMarkdownReader.dll` 內嵌 `about.md` 與 `about.en.md`。
+- 「關於」在兩種語言下的顯示（第 8 項）：尚未進行互動式手動驗證。
+
+## 前次結果（2026-10-28，資安修正）
 
 - `dotnet build MinimalMarkdownReader.sln --configuration Debug`：通過，0 警告 0 錯誤。
 - `dotnet test MinimalMarkdownReader.sln --no-build --configuration Debug`：通過，31/31。
