@@ -60,6 +60,11 @@ public partial class MainWindow : Window
                 await OpenDocumentsAsync([path]);
             };
             reader.PageClicked += (_, _) => FocusPane(pane);
+            reader.Scrolled += async (_, delta) =>
+            {
+                var other = 1 - pane;
+                if (IsSplit && _settings.SyncScroll && _webViews[other].Visibility == Visibility.Visible) await _readers[other]!.FollowScrollAsync(delta);
+            };
             _readers[pane] = reader;
         }
         try
@@ -200,7 +205,7 @@ public partial class MainWindow : Window
             try
             {
                 var document = await _documentService.LoadAsync(tab.Path);
-                _readers[pane]!.ShowDocument(document, _markdownService.ToSafeHtml(document, _documentService), _settings.WithLayout(tab.Layout), tab.ScrollY);
+                _readers[pane]!.ShowDocument(document, _markdownService.ToSafeHtml(document, _documentService), PageSettings(tab), tab.ScrollY);
                 _webViews[pane].Visibility = Visibility.Visible;
                 return;
             }
@@ -251,7 +256,13 @@ public partial class MainWindow : Window
         ApplySplitLayout();
         if (wasSplit != IsSplit) await UpdatePanesAsync(IsSplit ? _workspace.Split : _workspace.Unsplit);
         else RefreshView();
-        QueueSave();
+        ApplyAndQueueSave();
+    }
+
+    private void SyncScroll_Click(object sender, RoutedEventArgs e)
+    {
+        _settings.SyncScroll = SyncScrollButton.IsChecked == true;
+        ApplyAndQueueSave();
     }
 
     private const double SplitterThickness = 5;
@@ -425,7 +436,7 @@ public partial class MainWindow : Window
 
     private void RestoreDefaults_Click(object sender, RoutedEventArgs e)
     {
-        _settings = new ReaderSettings { UiLanguage = _localization.CurrentLanguage, SplitMode = _settings.SplitMode, SplitRatio = _settings.SplitRatio };
+        _settings = new ReaderSettings { UiLanguage = _localization.CurrentLanguage, SplitMode = _settings.SplitMode, SplitRatio = _settings.SplitRatio, SyncScroll = _settings.SyncScroll };
         if (_workspace.ActiveTab is { } tab) tab.Layout = _settings.GetLayout();
         SetControlsFromSettings();
         ApplyAndQueueSave();
@@ -438,12 +449,21 @@ public partial class MainWindow : Window
         catch (Exception ex) { StatusText.Text = _localization.Format("SaveSettingsFailed", ex.Message); }
     }
 
+    // What a tab's page renders: the global settings with the tab's own layout. Pages only report scrolling while
+    // sync scrolling is in effect.
+    private ReaderSettings PageSettings(DocumentTab tab)
+    {
+        var settings = _settings.WithLayout(tab.Layout);
+        settings.SyncScroll = IsSplit && _settings.SyncScroll;
+        return settings;
+    }
+
     // Pushes the global settings plus each visible tab's own layout to its pane, then schedules a save.
     private async void ApplyAndQueueSave()
     {
         foreach (var pane in Panes)
             if (_workspace.TabInPane(pane) is { } tab && _readers[pane] is { } reader && _webViews[pane].Visibility == Visibility.Visible)
-                await reader.ApplySettingsAsync(_settings.WithLayout(tab.Layout));
+                await reader.ApplySettingsAsync(PageSettings(tab));
         QueueSave();
     }
 
@@ -468,6 +488,8 @@ public partial class MainWindow : Window
             if ((string)button.Tag == _settings.SplitMode) button.Background = SelectedButtonBackground;
             else button.ClearValue(BackgroundProperty);
         }
+        SyncScrollButton.IsChecked = _settings.SyncScroll;
+        SyncScrollButton.IsEnabled = IsSplit;
         _updatingControls = false;
         UpdateCustomColorControls();
     }
@@ -531,6 +553,8 @@ public partial class MainWindow : Window
         SplitVerticalButton.ToolTip = _localization.Get("SplitVertical");
         SplitHorizontalButton.ToolTip = _localization.Get("SplitHorizontal");
         PaneSplitter.ToolTip = _localization.Get("SplitterHint");
+        SyncScrollButton.Content = _localization.Get("SyncScroll");
+        SyncScrollButton.ToolTip = _localization.Get("SyncScrollHint");
         PrimaryPanePlaceholder.Text = SecondaryPanePlaceholder.Text = _localization.Get("PanePlaceholder");
         UpdateStatus();
         RebuildTabStrip();

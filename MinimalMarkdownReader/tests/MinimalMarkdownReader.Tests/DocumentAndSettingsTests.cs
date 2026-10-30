@@ -61,7 +61,8 @@ public sealed class DocumentAndSettingsTests : IDisposable
             TextAlign = "center",
             UiLanguage = "en",
             SplitMode = "horizontal",
-            SplitRatio = 0.3
+            SplitRatio = 0.3,
+            SyncScroll = true
         };
         var service = new SettingsService(path);
         await service.SaveAsync(expected);
@@ -74,6 +75,7 @@ public sealed class DocumentAndSettingsTests : IDisposable
         Assert.Equal(expected.UiLanguage, actual.UiLanguage);
         Assert.Equal(expected.SplitMode, actual.SplitMode);
         Assert.Equal(expected.SplitRatio, actual.SplitRatio);
+        Assert.True(actual.SyncScroll);
     }
 
     [Theory]

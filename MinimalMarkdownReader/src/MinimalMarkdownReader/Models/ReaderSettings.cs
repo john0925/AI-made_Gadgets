@@ -19,6 +19,9 @@ public sealed class ReaderSettings
     public string SplitMode { get; set; } = "none";
     public double SplitRatio { get; set; } = DefaultSplitRatio;
 
+    // Both panes of a split view scroll by the same distance.
+    public bool SyncScroll { get; set; }
+
     // The four layout fields double as the default layout for newly opened tabs.
     public LayoutSettings GetLayout() => new(TextAlign, FontFamily, FontSize, LineHeight);
 
@@ -48,7 +51,8 @@ public sealed class ReaderSettings
         UiLanguage = UiLanguage,
         CustomColors = CustomColors.Clone(),
         SplitMode = SplitMode,
-        SplitRatio = SplitRatio
+        SplitRatio = SplitRatio,
+        SyncScroll = SyncScroll
     };
 }
 

@@ -22,6 +22,9 @@ public sealed class ReaderService
     // tell which pane the user chose.
     public event EventHandler? PageClicked;
 
+    // Raised with the distance (CSS pixels) the user just scrolled the page, only while the page has sync scrolling on.
+    public event EventHandler<double>? Scrolled;
+
     public ReaderService(WebView2 webView) => _webView = webView;
 
     public async Task InitializeAsync()
@@ -43,7 +46,9 @@ public sealed class ReaderService
         core.NavigationCompleted += OnNavigationCompleted;
         core.WebMessageReceived += (_, e) =>
         {
-            if (e.WebMessageAsJson == JsonSerializer.Serialize(ReaderPage.FocusMessage)) PageClicked?.Invoke(this, EventArgs.Empty);
+            var message = e.WebMessageAsJson;
+            if (message == JsonSerializer.Serialize(ReaderPage.FocusMessage)) PageClicked?.Invoke(this, EventArgs.Empty);
+            else if (ReaderPage.TryParseScrollDelta(message, out var delta)) Scrolled?.Invoke(this, delta);
         };
     }
 
@@ -66,8 +71,12 @@ public sealed class ReaderService
         return double.TryParse(result, NumberStyles.Float, CultureInfo.InvariantCulture, out var y) && double.IsFinite(y) ? Math.Max(0, y) : 0;
     }
 
+    // Scrolls by the other pane's distance; the page records its new position, so this scroll is not reported back.
+    public Task FollowScrollAsync(double delta) =>
+        _webView.ExecuteScriptAsync("window.reader.follow(" + delta.ToString("0.##", CultureInfo.InvariantCulture) + ");");
+
     private Task ScrollToAsync(double y) =>
-        _webView.ExecuteScriptAsync("window.scrollTo(0," + y.ToString("0.##", CultureInfo.InvariantCulture) + ");");
+        _webView.ExecuteScriptAsync("window.reader.jump(" + y.ToString("0.##", CultureInfo.InvariantCulture) + ");");
 
     private void OnWebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs e)
     {

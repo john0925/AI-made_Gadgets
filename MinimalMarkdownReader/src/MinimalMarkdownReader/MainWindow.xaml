@@ -51,9 +51,10 @@
                 <Button x:Name="SplitVerticalButton" ToolTip="左右並排" Tag="vertical" Click="SplitMode_Click" Padding="7,4" Margin="0,0,3,0">
                     <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="18" Height="16" BorderBrush="#1E365B" BorderThickness="1.6" CornerRadius="1.5"/><Border Width="1.6" Height="16" Background="#1E365B" Canvas.Left="8.2"/></Canvas></Viewbox>
                 </Button>
-                <Button x:Name="SplitHorizontalButton" ToolTip="上下並排" Tag="horizontal" Click="SplitMode_Click" Padding="7,4">
+                <Button x:Name="SplitHorizontalButton" ToolTip="上下並排" Tag="horizontal" Click="SplitMode_Click" Padding="7,4" Margin="0,0,6,0">
                     <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="18" Height="16" BorderBrush="#1E365B" BorderThickness="1.6" CornerRadius="1.5"/><Border Width="18" Height="1.6" Background="#1E365B" Canvas.Top="7.2"/></Canvas></Viewbox>
                 </Button>
+                <ToggleButton x:Name="SyncScrollButton" Content="同步捲動" ToolTip="兩側一起捲動相同的距離" Click="SyncScroll_Click" Padding="8,3" VerticalAlignment="Center" />
             </WrapPanel>
         </Border>
         <Border x:Name="CustomColorPanel" DockPanel.Dock="Top" Padding="10,6" Background="#FAFAFA" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Visibility="Collapsed">

@@ -59,4 +59,17 @@ public sealed class ReaderPageTests
     {
         Assert.Equal(expected, ReaderPage.IsDocumentNavigation(uri));
     }
+
+    [Theory]
+    [InlineData("120", true)]
+    [InlineData("-33.5", true)]
+    [InlineData("0", false)]
+    [InlineData("\"focus\"", false)]
+    [InlineData("1e300", false)]
+    [InlineData("{\"d\":1}", false)]
+    [InlineData("null", false)]
+    public void TryParseScrollDelta_AcceptsOnlyBoundedNumbers(string json, bool expected)
+    {
+        Assert.Equal(expected, ReaderPage.TryParseScrollDelta(json, out _));
+    }
 }
