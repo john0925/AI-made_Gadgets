@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using MinimalMarkdownReader.Models;
 using Microsoft.Web.WebView2.Core;
@@ -9,9 +10,13 @@ public sealed class ReaderService
 {
     private readonly WebView2 _webView;
     private ReaderSettings? _pendingSettings;
+    private double _pendingScrollY;
     private bool _expectingDocumentNavigation;
 
     public event EventHandler<string>? NavigationFailed;
+
+    // Raised with the local path when a file is dropped onto the page (WebView2 turns the drop into a file: navigation).
+    public event EventHandler<string>? FileDropped;
 
     public ReaderService(WebView2 webView) => _webView = webView;
 
@@ -34,17 +39,27 @@ public sealed class ReaderService
         core.NavigationCompleted += OnNavigationCompleted;
     }
 
-    public void ShowDocument(MarkdownDocument document, string body, ReaderSettings settings)
+    public void ShowDocument(MarkdownDocument document, string body, ReaderSettings settings, double scrollY = 0)
     {
         _webView.CoreWebView2.SetVirtualHostNameToFolderMapping(ReaderPage.VirtualHost, document.DirectoryPath,
             CoreWebView2HostResourceAccessKind.DenyCors);
         _pendingSettings = settings.Clone();
+        _pendingScrollY = scrollY;
         _expectingDocumentNavigation = true;
         _webView.NavigateToString(ReaderPage.Build(body));
     }
 
     public Task ApplySettingsAsync(ReaderSettings settings) => _webView.ExecuteScriptAsync(
         "window.reader.applySettings(" + JsonSerializer.Serialize(settings, ReaderPage.ScriptJsonOptions) + ");");
+
+    public async Task<double> GetScrollPositionAsync()
+    {
+        var result = await _webView.ExecuteScriptAsync("window.scrollY");
+        return double.TryParse(result, NumberStyles.Float, CultureInfo.InvariantCulture, out var y) && double.IsFinite(y) ? Math.Max(0, y) : 0;
+    }
+
+    private Task ScrollToAsync(double y) =>
+        _webView.ExecuteScriptAsync("window.scrollTo(0," + y.ToString("0.##", CultureInfo.InvariantCulture) + ");");
 
     private void OnWebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs e)
     {
@@ -62,6 +77,7 @@ public sealed class ReaderService
         }
         e.Cancel = true;
         if (ExternalLinks.TryGetWebUri(e.Uri, out var uri)) ExternalLinks.Open(uri);
+        else if (Uri.TryCreate(e.Uri, UriKind.Absolute, out var fileUri) && fileUri.IsFile) FileDropped?.Invoke(this, fileUri.LocalPath);
     }
 
     private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
@@ -81,7 +97,10 @@ public sealed class ReaderService
         }
         if (_pendingSettings is null) return;
         var settings = _pendingSettings;
+        var scrollY = _pendingScrollY;
         _pendingSettings = null;
+        _pendingScrollY = 0;
         await ApplySettingsAsync(settings);
+        if (scrollY > 0) await ScrollToAsync(scrollY);
     }
 }

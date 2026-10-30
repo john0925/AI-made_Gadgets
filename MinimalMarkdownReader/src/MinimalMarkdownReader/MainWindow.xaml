@@ -12,6 +12,7 @@
                     <Button.ContextMenu>
                         <ContextMenu>
                             <MenuItem x:Name="MenuOpenDocumentItem" Header="開啟文件" Click="OpenDocument_Click" />
+                            <MenuItem x:Name="MenuSetDefaultLayoutItem" Header="將目前版面設為預設" Click="SetDefaultLayout_Click" />
                             <MenuItem x:Name="MenuLanguageItem" Header="切換語系">
                                 <MenuItem x:Name="MenuTraditionalChineseItem" Header="繁體中文" Tag="zh-Hant" Click="LanguageMenuItem_Click" />
                                 <MenuItem x:Name="MenuEnglishItem" Header="English" Tag="en" Click="LanguageMenuItem_Click" />
@@ -53,6 +54,23 @@
                 <Button x:Name="TextColorButton" Content="#352B23" Click="TextColor_Click" Padding="8,3" Margin="0,0,6,0" />
                 <Button x:Name="RestoreDefaultsButton" Content="恢復預設" Click="RestoreDefaults_Click" Padding="8,3" />
             </WrapPanel>
+        </Border>
+        <Border x:Name="TabStrip" DockPanel.Dock="Top" Background="#E9E9E9" BorderBrush="#D5D5D5" BorderThickness="0,0,0,1" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ScrollViewer x:Name="TabScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled"
+                              PreviewMouseWheel="TabScrollViewer_PreviewMouseWheel" ScrollChanged="TabScrollViewer_ScrollChanged">
+                    <StackPanel x:Name="TabPanel" Orientation="Horizontal" />
+                </ScrollViewer>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="4,0">
+                    <Button x:Name="TabScrollLeftButton" Content="◀" Click="TabScrollLeft_Click" Padding="6,2" Margin="0,3,2,3" Visibility="Collapsed" Focusable="False" />
+                    <Button x:Name="TabScrollRightButton" Content="▶" Click="TabScrollRight_Click" Padding="6,2" Margin="0,3,2,3" Visibility="Collapsed" Focusable="False" />
+                    <Button x:Name="TabListButton" Content="▾" Click="TabListButton_Click" Padding="6,2" Margin="0,3" Focusable="False" />
+                </StackPanel>
+            </Grid>
         </Border>
         <Border DockPanel.Dock="Bottom" Padding="9,5" Background="#F2F2F2" BorderBrush="#D5D5D5" BorderThickness="0,1,0,0">
             <TextBlock x:Name="StatusText" Text="尚未開啟文件" TextTrimming="CharacterEllipsis" />

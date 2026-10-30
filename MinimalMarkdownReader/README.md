@@ -1,12 +1,13 @@
 # MinimalMarkdownReader
 
-MinimalMarkdownReader 是 Windows 10/11 x64 的單一文件、唯讀 Markdown 閱讀器。它以 WPF、WebView2 與 Markdig 顯示 UTF-8 Markdown，介面採繁體中文。
+MinimalMarkdownReader 是 Windows 10/11 x64 的唯讀 Markdown 閱讀器，可用分頁同時開啟多份文件。它以 WPF、WebView2 與 Markdig 顯示 UTF-8 Markdown，介面採繁體中文。
 
 ## 功能
 
-- 開啟 `.md`／`.markdown` 文件，支援 `Ctrl+O`、拖放與檔案關聯雙擊；新文件會取代目前內容。
-- 調整內文對齊、系統字型、字級、行距與柔和／護眼／明亮／深色主題。
-- 支援自訂背景色與本文色，並保存全域閱讀偏好至 `%LOCALAPPDATA%\MinimalMarkdownReader\settings.json`。首次啟動時會讀取舊版 MarkdownReader 的設定檔。
+- 開啟 `.md`／`.markdown` 文件，支援 `Ctrl+O`（可多選）、拖放（可一次拖入多個檔案）與檔案關聯雙擊；每份文件開在自己的分頁，已開啟的文件會直接切換到該分頁。
+- 分頁：點擊切換、✕ 或滑鼠中鍵關閉，右鍵可關閉其他分頁或複製路徑；`Ctrl+Tab`／`Ctrl+Shift+Tab` 切換、`Ctrl+W` 關閉。切換分頁時會記住並還原各文件的捲動位置，並重新讀取檔案以顯示最新內容。
+- 調整內文對齊、系統字型、字級、行距與柔和／護眼／明亮／深色主題。對齊、字型、字級與行距依分頁各自設定（分頁關閉後不保留）；新分頁套用預設版面，可用 ☰「將目前版面設為預設」更新。主題與顏色為所有分頁共用。
+- 支援自訂背景色與本文色，並將主題、顏色、預設版面與介面語言保存至 `%LOCALAPPDATA%\MinimalMarkdownReader\settings.json`。首次啟動時會讀取舊版 MarkdownReader 的設定檔。
 - 顯示文件目錄內的相對 PNG、JPG、GIF、WebP、BMP 圖片；限制圖片不得跳脫文件目錄。
 - 外部 HTTP(S) 連結會交給預設瀏覽器開啟。
 - 點擊工具列的三橫線選單可開啟文件、切換繁體中文／English，以及查看關於資訊（依介面語言顯示繁體中文或英文，含可點擊的 GitHub 專案與下載連結）。語言選擇會保存並在下次啟動時套用。
@@ -62,7 +63,7 @@ dotnet publish src/MinimalMarkdownReader/MinimalMarkdownReader.csproj -c Release
 
 ## 安全與限制
 
-Markdown 原始 HTML 已停用，`{...}` 自訂屬性與影片／YouTube 嵌入擴充也未啟用；文件內的 JavaScript、事件屬性、iframe、影音、`javascript:` URI、遠端圖片與未允許的本機圖片都不會載入。閱讀頁面另有內容安全政策（CSP），並由程式攔截所有網路請求，只允許讀取文件資料夾內的圖片；下載與外部協定啟動一律封鎖。程式不提供編輯、目錄、多分頁、搜尋、列印、PDF 匯出、雲端同步或 Mermaid。設定檔格式錯誤時會安全地改用預設值。
+Markdown 原始 HTML 已停用，`{...}` 自訂屬性與影片／YouTube 嵌入擴充也未啟用；文件內的 JavaScript、事件屬性、iframe、影音、`javascript:` URI、遠端圖片與未允許的本機圖片都不會載入。閱讀頁面另有內容安全政策（CSP），並由程式攔截所有網路請求，只允許讀取文件資料夾內的圖片；下載與外部協定啟動一律封鎖。程式不提供編輯、目錄、搜尋、列印、PDF 匯出、雲端同步或 Mermaid。設定檔格式錯誤時會安全地改用預設值。
 
 ## 已驗證
 

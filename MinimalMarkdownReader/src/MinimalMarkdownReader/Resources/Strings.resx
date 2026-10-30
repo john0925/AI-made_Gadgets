@@ -46,4 +46,12 @@
   <data name="InvalidEncoding" xml:space="preserve"><value>The document is not valid UTF-8.</value></data>
   <data name="BlockedImage" xml:space="preserve"><value>[Image not loaded]</value></data>
   <data name="WebViewNavigationFailed" xml:space="preserve"><value>WebView2 could not display the document: {0}</value></data>
+  <data name="CloseTab" xml:space="preserve"><value>Close tab</value></data>
+  <data name="CloseOtherTabs" xml:space="preserve"><value>Close other tabs</value></data>
+  <data name="CopyPath" xml:space="preserve"><value>Copy path</value></data>
+  <data name="AllTabs" xml:space="preserve"><value>All tabs</value></data>
+  <data name="ScrollTabsLeft" xml:space="preserve"><value>Scroll tabs left</value></data>
+  <data name="ScrollTabsRight" xml:space="preserve"><value>Scroll tabs right</value></data>
+  <data name="SetDefaultLayout" xml:space="preserve"><value>Use current layout as default</value></data>
+  <data name="DefaultLayoutSaved" xml:space="preserve"><value>New tabs will use the current layout.</value></data>
 </root>

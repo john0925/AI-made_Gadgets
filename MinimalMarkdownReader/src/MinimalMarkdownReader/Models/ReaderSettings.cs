@@ -13,6 +13,25 @@ public sealed class ReaderSettings
     public string UiLanguage { get; set; } = "";
     public CustomColors CustomColors { get; set; } = new();
 
+    // The four layout fields double as the default layout for newly opened tabs.
+    public LayoutSettings GetLayout() => new(TextAlign, FontFamily, FontSize, LineHeight);
+
+    public void SetLayout(LayoutSettings layout)
+    {
+        TextAlign = layout.TextAlign;
+        FontFamily = layout.FontFamily;
+        FontSize = layout.FontSize;
+        LineHeight = layout.LineHeight;
+    }
+
+    // A copy whose layout fields come from a tab; used for what the page actually renders.
+    public ReaderSettings WithLayout(LayoutSettings layout)
+    {
+        var settings = Clone();
+        settings.SetLayout(layout);
+        return settings;
+    }
+
     public ReaderSettings Clone() => new()
     {
         FontFamily = FontFamily,
