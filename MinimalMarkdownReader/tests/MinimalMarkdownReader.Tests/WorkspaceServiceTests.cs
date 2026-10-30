@@ -37,9 +37,8 @@ public sealed class WorkspaceServiceTests
     {
         var workspace = WithTabs("a.md", "b.md", "c.md");
         workspace.Activate(workspace.Tabs[1]);
-        var next = workspace.Close(workspace.Tabs[1]);
-        Assert.Equal("c.md", next!.Title);
-        Assert.Null(workspace.ActiveTab);
+        Assert.Equal(0, workspace.Close(workspace.Tabs[1]));
+        Assert.Equal("c.md", workspace.ActiveTab!.Title);
     }
 
     [Fact]
@@ -47,26 +46,108 @@ public sealed class WorkspaceServiceTests
     {
         var workspace = WithTabs("a.md", "b.md");
         workspace.Activate(workspace.Tabs[1]);
-        Assert.Equal("a.md", workspace.Close(workspace.Tabs[1])!.Title);
+        workspace.Close(workspace.Tabs[1]);
+        Assert.Equal("a.md", workspace.ActiveTab!.Title);
     }
 
     [Fact]
-    public void Close_OnlyTab_ReturnsNull()
+    public void Close_OnlyTab_LeavesPaneEmpty()
     {
         var workspace = WithTabs("a.md");
         workspace.Activate(workspace.Tabs[0]);
-        Assert.Null(workspace.Close(workspace.Tabs[0]));
+        Assert.Equal(0, workspace.Close(workspace.Tabs[0]));
+        Assert.Null(workspace.ActiveTab);
         Assert.Empty(workspace.Tabs);
     }
 
     [Fact]
-    public void Close_InactiveTab_KeepsActiveTab()
+    public void Close_HiddenTab_ChangesNoPane()
     {
         var workspace = WithTabs("a.md", "b.md");
         var active = workspace.Tabs[0];
         workspace.Activate(active);
-        Assert.Same(active, workspace.Close(workspace.Tabs[1]));
+        Assert.Null(workspace.Close(workspace.Tabs[1]));
         Assert.Same(active, workspace.ActiveTab);
+    }
+
+    [Fact]
+    public void Close_InSplitView_NeverPicksTabFromOtherPane()
+    {
+        var workspace = WithTabs("a.md", "b.md", "c.md");
+        workspace.Activate(workspace.Tabs[1]);
+        workspace.Split();
+        Assert.Equal("c.md", workspace.TabInPane(1)!.Title);
+        Assert.Equal(0, workspace.Close(workspace.Tabs[1]));
+        Assert.Equal("a.md", workspace.TabInPane(0)!.Title);
+        Assert.Equal(0, workspace.Close(workspace.Tabs[0]));
+        Assert.Null(workspace.TabInPane(0));
+        Assert.Equal("c.md", workspace.TabInPane(1)!.Title);
+    }
+
+    [Fact]
+    public void Split_ShowsNextTabInSecondPaneAndFocusesIt()
+    {
+        var workspace = WithTabs("a.md", "b.md", "c.md");
+        workspace.Activate(workspace.Tabs[2]);
+        workspace.Split();
+        Assert.Equal(1, workspace.FocusedPane);
+        Assert.Equal(("c.md", "a.md"), (workspace.TabInPane(0)!.Title, workspace.TabInPane(1)!.Title));
+    }
+
+    [Fact]
+    public void Split_WithOneTab_LeavesSecondPaneEmpty()
+    {
+        var workspace = WithTabs("a.md");
+        workspace.Activate(workspace.Tabs[0]);
+        workspace.Split();
+        Assert.Null(workspace.ActiveTab);
+        workspace.Activate(workspace.Tabs[0]);
+        Assert.Equal(0, workspace.FocusedPane);
+        Assert.Null(workspace.TabInPane(1));
+    }
+
+    [Fact]
+    public void Activate_InSplitView_ReplacesFocusedPaneOnly()
+    {
+        var workspace = WithTabs("a.md", "b.md", "c.md");
+        workspace.Activate(workspace.Tabs[0]);
+        workspace.Split();
+        workspace.Activate(workspace.Tabs[2]);
+        Assert.Equal(("a.md", "c.md"), (workspace.TabInPane(0)!.Title, workspace.TabInPane(1)!.Title));
+        Assert.Equal(1, workspace.PaneOf(workspace.Tabs[2]));
+        Assert.Null(workspace.PaneOf(workspace.Tabs[1]));
+    }
+
+    [Fact]
+    public void Show_TabFromOtherPane_SwapsPanes()
+    {
+        var workspace = WithTabs("a.md", "b.md");
+        workspace.Activate(workspace.Tabs[0]);
+        workspace.Split();
+        workspace.Show(1, workspace.Tabs[0]);
+        Assert.Equal(("b.md", "a.md"), (workspace.TabInPane(0)!.Title, workspace.TabInPane(1)!.Title));
+    }
+
+    [Fact]
+    public void Unsplit_KeepsFocusedPaneTab()
+    {
+        var workspace = WithTabs("a.md", "b.md");
+        workspace.Activate(workspace.Tabs[0]);
+        workspace.Split();
+        workspace.Unsplit();
+        Assert.Equal(0, workspace.FocusedPane);
+        Assert.Equal("b.md", workspace.ActiveTab!.Title);
+        Assert.Null(workspace.TabInPane(1));
+    }
+
+    [Fact]
+    public void Neighbor_InSplitView_SkipsOtherPaneTab()
+    {
+        var workspace = WithTabs("a.md", "b.md", "c.md");
+        workspace.Activate(workspace.Tabs[0]);
+        workspace.Split();
+        workspace.Focus(0);
+        Assert.Equal("c.md", workspace.Neighbor(1)!.Title);
     }
 
     [Fact]
@@ -78,6 +159,17 @@ public sealed class WorkspaceServiceTests
         workspace.CloseOthers(keep);
         Assert.Same(keep, Assert.Single(workspace.Tabs));
         Assert.Same(keep, workspace.ActiveTab);
+    }
+
+    [Fact]
+    public void CloseOthers_EmptiesPaneShowingRemovedTab()
+    {
+        var workspace = WithTabs("a.md", "b.md");
+        workspace.Activate(workspace.Tabs[0]);
+        workspace.Split();
+        workspace.CloseOthers(workspace.Tabs[0]);
+        Assert.Null(workspace.TabInPane(1));
+        Assert.Equal("a.md", workspace.TabInPane(0)!.Title);
     }
 
     [Theory]

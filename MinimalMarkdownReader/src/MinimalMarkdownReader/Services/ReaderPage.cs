@@ -9,11 +9,14 @@ public static class ReaderPage
 {
     public const string VirtualHost = "markdown.localhost";
 
+    // The only message the page sends to the host: the user pressed a mouse button inside the page.
+    public const string FocusMessage = "focus";
+
     public static JsonSerializerOptions ScriptJsonOptions { get; } = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     private static readonly string Script = "const palettes=" + JsonSerializer.Serialize(ThemePalettes.BuiltIn, ScriptJsonOptions) + ";" + """
 window.reader={applySettings:s=>{const t=palettes[s.theme]||s.customColors;const r=document.documentElement;r.style.setProperty('--bg',t.background);r.style.setProperty('--text',t.text);r.style.setProperty('--heading',t.heading);r.style.setProperty('--link',t.link);r.style.setProperty('--code',t.codeBackground);r.style.setProperty('--font',JSON.stringify(s.fontFamily));r.style.setProperty('--size',s.fontSize+'px');r.style.setProperty('--line',s.lineHeight);r.style.setProperty('--align',s.textAlign);r.dataset.align=s.textAlign}};
-""";
+""" + "addEventListener('pointerdown',()=>chrome.webview.postMessage('" + FocusMessage + "'),true);";
 
     // Only the page's own script (allowed by hash) may run; event-handler attributes, remote content, frames and media are blocked.
     public static string ContentSecurityPolicy { get; } =

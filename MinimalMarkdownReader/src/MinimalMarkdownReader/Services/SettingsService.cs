@@ -55,6 +55,8 @@ public sealed class SettingsService
         && settings.TextAlign is "left" or "center" or "right"
         && ThemePalettes.IsValidTheme(settings.Theme)
         && settings.UiLanguage is "" or "zh-Hant" or "en"
+        && settings.SplitMode is "none" or "vertical" or "horizontal"
+        && settings.SplitRatio is >= ReaderSettings.MinSplitRatio and <= 1 - ReaderSettings.MinSplitRatio
         && !string.IsNullOrWhiteSpace(settings.FontFamily)
         && settings.FontFamily.Length <= 200
         && settings.CustomColors is not null

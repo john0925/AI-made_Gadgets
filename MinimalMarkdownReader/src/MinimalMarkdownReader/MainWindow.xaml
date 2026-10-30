@@ -44,6 +44,16 @@
                 <ComboBox x:Name="ThemeCombo" Width="88" SelectionChanged="SettingsControl_Changed">
                     <ComboBoxItem x:Name="ThemeSoftItem" Tag="soft">柔和</ComboBoxItem><ComboBoxItem x:Name="ThemeEyeItem" Tag="eye">護眼</ComboBoxItem><ComboBoxItem x:Name="ThemeLightItem" Tag="light">明亮</ComboBoxItem><ComboBoxItem x:Name="ThemeDarkItem" Tag="dark">深色</ComboBoxItem><ComboBoxItem x:Name="ThemeCustomItem" Tag="custom">自訂</ComboBoxItem>
                 </ComboBox>
+                <TextBlock x:Name="SplitLabel" Text="畫面" VerticalAlignment="Center" Margin="14,0,5,0" />
+                <Button x:Name="SplitNoneButton" ToolTip="單一畫面" Tag="none" Click="SplitMode_Click" Padding="7,4" Margin="0,0,3,0">
+                    <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="18" Height="16" BorderBrush="#1E365B" BorderThickness="1.6" CornerRadius="1.5"/></Canvas></Viewbox>
+                </Button>
+                <Button x:Name="SplitVerticalButton" ToolTip="左右並排" Tag="vertical" Click="SplitMode_Click" Padding="7,4" Margin="0,0,3,0">
+                    <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="18" Height="16" BorderBrush="#1E365B" BorderThickness="1.6" CornerRadius="1.5"/><Border Width="1.6" Height="16" Background="#1E365B" Canvas.Left="8.2"/></Canvas></Viewbox>
+                </Button>
+                <Button x:Name="SplitHorizontalButton" ToolTip="上下並排" Tag="horizontal" Click="SplitMode_Click" Padding="7,4">
+                    <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="18" Height="16" BorderBrush="#1E365B" BorderThickness="1.6" CornerRadius="1.5"/><Border Width="18" Height="1.6" Background="#1E365B" Canvas.Top="7.2"/></Canvas></Viewbox>
+                </Button>
             </WrapPanel>
         </Border>
         <Border x:Name="CustomColorPanel" DockPanel.Dock="Top" Padding="10,6" Background="#FAFAFA" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Visibility="Collapsed">
@@ -76,7 +86,22 @@
             <TextBlock x:Name="StatusText" Text="尚未開啟文件" TextTrimming="CharacterEllipsis" />
         </Border>
         <Grid>
-            <wv2:WebView2 x:Name="ReaderWebView" Visibility="Collapsed" />
+            <Grid x:Name="PaneGrid" Visibility="Collapsed" SizeChanged="PaneGrid_SizeChanged">
+                <Border x:Name="PrimaryPaneFrame" BorderBrush="Transparent" Background="White" MouseLeftButtonDown="PaneFrame_MouseLeftButtonDown">
+                    <Grid>
+                        <wv2:WebView2 x:Name="ReaderWebView" Visibility="Collapsed" />
+                        <TextBlock x:Name="PrimaryPanePlaceholder" Text="從分頁列選擇要顯示在這一側的文件。" Foreground="#777777" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" />
+                    </Grid>
+                </Border>
+                <GridSplitter x:Name="PaneSplitter" Background="#D5D5D5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext"
+                              Visibility="Collapsed" Focusable="False" DragCompleted="PaneSplitter_DragCompleted" PreviewMouseLeftButtonDown="PaneSplitter_PreviewMouseLeftButtonDown" />
+                <Border x:Name="SecondaryPaneFrame" BorderBrush="Transparent" Background="White" Visibility="Collapsed" MouseLeftButtonDown="PaneFrame_MouseLeftButtonDown">
+                    <Grid>
+                        <wv2:WebView2 x:Name="SecondaryWebView" Visibility="Collapsed" />
+                        <TextBlock x:Name="SecondaryPanePlaceholder" Text="從分頁列選擇要顯示在這一側的文件。" Foreground="#777777" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" />
+                    </Grid>
+                </Border>
+            </Grid>
             <StackPanel x:Name="WelcomePanel" HorizontalAlignment="Center" VerticalAlignment="Center" Width="500">
                 <TextBlock Text="MinimalMarkdownReader" FontSize="28" FontWeight="SemiBold" HorizontalAlignment="Center" />
                 <TextBlock x:Name="WelcomeInstructionText" Text="開啟一份 UTF-8 Markdown 文件開始閱讀。也可以將 .md 文件拖放到此視窗。" TextAlignment="Center" TextWrapping="Wrap" Margin="0,12,0,16" />

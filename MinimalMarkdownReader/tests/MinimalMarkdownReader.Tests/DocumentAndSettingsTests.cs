@@ -59,7 +59,9 @@ public sealed class DocumentAndSettingsTests : IDisposable
             FontSize = 24,
             LineHeight = 2.1,
             TextAlign = "center",
-            UiLanguage = "en"
+            UiLanguage = "en",
+            SplitMode = "horizontal",
+            SplitRatio = 0.3
         };
         var service = new SettingsService(path);
         await service.SaveAsync(expected);
@@ -70,6 +72,28 @@ public sealed class DocumentAndSettingsTests : IDisposable
         Assert.Equal(expected.LineHeight, actual.LineHeight);
         Assert.Equal(expected.TextAlign, actual.TextAlign);
         Assert.Equal(expected.UiLanguage, actual.UiLanguage);
+        Assert.Equal(expected.SplitMode, actual.SplitMode);
+        Assert.Equal(expected.SplitRatio, actual.SplitRatio);
+    }
+
+    [Theory]
+    [InlineData("none", 0.5, true)]
+    [InlineData("vertical", 0.15, true)]
+    [InlineData("horizontal", 0.85, true)]
+    [InlineData("diagonal", 0.5, false)]
+    [InlineData("vertical", 0.1, false)]
+    [InlineData("vertical", 0.9, false)]
+    [InlineData("vertical", double.NaN, false)]
+    public void Validate_ChecksSplitModeAndRatio(string mode, double ratio, bool valid) =>
+        Assert.Equal(valid, SettingsService.Validate(new ReaderSettings { SplitMode = mode, SplitRatio = ratio }));
+
+    [Fact]
+    public async Task SettingsService_LoadOlderFileWithoutSplitFields_UsesSingleView()
+    {
+        var path = Path.Combine(_directory, "settings.json");
+        await File.WriteAllTextAsync(path, """{ "Theme": "dark" }""");
+        var settings = await new SettingsService(path).LoadAsync();
+        Assert.Equal(("dark", "none", ReaderSettings.DefaultSplitRatio), (settings.Theme, settings.SplitMode, settings.SplitRatio));
     }
 
     [Fact]

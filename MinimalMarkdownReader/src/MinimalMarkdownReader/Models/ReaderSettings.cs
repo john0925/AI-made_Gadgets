@@ -4,6 +4,8 @@ public sealed class ReaderSettings
 {
     public const int DefaultFontSize = 18;
     public const double DefaultLineHeight = 1.8;
+    public const double DefaultSplitRatio = 0.5;
+    public const double MinSplitRatio = 0.15;
 
     public string FontFamily { get; set; } = "Microsoft JhengHei";
     public int FontSize { get; set; } = DefaultFontSize;
@@ -12,6 +14,10 @@ public sealed class ReaderSettings
     public string Theme { get; set; } = "soft";
     public string UiLanguage { get; set; } = "";
     public CustomColors CustomColors { get; set; } = new();
+
+    // "none" (one pane), "vertical" (left/right) or "horizontal" (top/bottom), and the first pane's share of the space.
+    public string SplitMode { get; set; } = "none";
+    public double SplitRatio { get; set; } = DefaultSplitRatio;
 
     // The four layout fields double as the default layout for newly opened tabs.
     public LayoutSettings GetLayout() => new(TextAlign, FontFamily, FontSize, LineHeight);
@@ -40,7 +46,9 @@ public sealed class ReaderSettings
         TextAlign = TextAlign,
         Theme = Theme,
         UiLanguage = UiLanguage,
-        CustomColors = CustomColors.Clone()
+        CustomColors = CustomColors.Clone(),
+        SplitMode = SplitMode,
+        SplitRatio = SplitRatio
     };
 }
 

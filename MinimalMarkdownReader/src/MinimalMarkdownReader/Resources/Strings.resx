@@ -54,4 +54,15 @@
   <data name="ScrollTabsRight" xml:space="preserve"><value>Scroll tabs right</value></data>
   <data name="SetDefaultLayout" xml:space="preserve"><value>Use current layout as default</value></data>
   <data name="DefaultLayoutSaved" xml:space="preserve"><value>New tabs will use the current layout.</value></data>
+  <data name="SplitView" xml:space="preserve"><value>View</value></data>
+  <data name="SplitNone" xml:space="preserve"><value>Single view</value></data>
+  <data name="SplitVertical" xml:space="preserve"><value>Side by side</value></data>
+  <data name="SplitHorizontal" xml:space="preserve"><value>Top and bottom</value></data>
+  <data name="SplitterHint" xml:space="preserve"><value>Drag to resize. Double-click to split evenly.</value></data>
+  <data name="PanePlaceholder" xml:space="preserve"><value>Choose a tab to show it on this side.</value></data>
+  <data name="ShowInOtherPane" xml:space="preserve"><value>Show on the other side</value></data>
+  <data name="PaneLeft" xml:space="preserve"><value>L</value></data>
+  <data name="PaneRight" xml:space="preserve"><value>R</value></data>
+  <data name="PaneTop" xml:space="preserve"><value>T</value></data>
+  <data name="PaneBottom" xml:space="preserve"><value>B</value></data>
 </root>

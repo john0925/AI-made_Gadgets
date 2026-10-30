@@ -18,6 +18,10 @@ public sealed class ReaderService
     // Raised with the local path when a file is dropped onto the page (WebView2 turns the drop into a file: navigation).
     public event EventHandler<string>? FileDropped;
 
+    // Raised when the user clicks inside the page. WebView2's own focus events also fire on reloads, so they cannot
+    // tell which pane the user chose.
+    public event EventHandler? PageClicked;
+
     public ReaderService(WebView2 webView) => _webView = webView;
 
     public async Task InitializeAsync()
@@ -37,6 +41,10 @@ public sealed class ReaderService
         core.DownloadStarting += (_, e) => e.Cancel = true;
         core.LaunchingExternalUriScheme += (_, e) => e.Cancel = true;
         core.NavigationCompleted += OnNavigationCompleted;
+        core.WebMessageReceived += (_, e) =>
+        {
+            if (e.WebMessageAsJson == JsonSerializer.Serialize(ReaderPage.FocusMessage)) PageClicked?.Invoke(this, EventArgs.Empty);
+        };
     }
 
     public void ShowDocument(MarkdownDocument document, string body, ReaderSettings settings, double scrollY = 0)
