@@ -66,5 +66,4 @@
   <data name="PaneTop" xml:space="preserve"><value>T</value></data>
   <data name="PaneBottom" xml:space="preserve"><value>B</value></data>
   <data name="SyncScroll" xml:space="preserve"><value>Sync scroll</value></data>
-  <data name="SyncScrollHint" xml:space="preserve"><value>Scroll both sides by the same distance</value></data>
 </root>

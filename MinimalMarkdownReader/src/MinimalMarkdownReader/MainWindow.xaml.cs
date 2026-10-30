@@ -29,11 +29,12 @@ public partial class MainWindow : Window
     private bool _updatingControls;
     private bool _controlsReady;
     private bool _isClosing;
-    private readonly string? _initialDocumentPath;
+    // Files from the command line or another instance that arrive before WebView2 is ready.
+    private readonly List<string> _pendingPaths = [];
 
-    public MainWindow(string? initialDocumentPath = null)
+    public MainWindow(IEnumerable<string>? initialPaths = null)
     {
-        _initialDocumentPath = initialDocumentPath;
+        if (initialPaths is not null) _pendingPaths.AddRange(initialPaths);
         InitializeComponent();
         _webViews = [ReaderWebView, SecondaryWebView];
         _paneFrames = [PrimaryPaneFrame, SecondaryPaneFrame];
@@ -46,6 +47,7 @@ public partial class MainWindow : Window
     {
         FontFamilyCombo.ItemsSource = Fonts.SystemFontFamilies.OrderBy(font => font.Source);
         _settings = await _settingsService.LoadAsync();
+        _settings.SplitMode = "none";
         _settings.UiLanguage = _localization.SetLanguage(_settings.UiLanguage);
         ApplyLocalizedText();
         ApplySplitLayout();
@@ -74,10 +76,24 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) { StatusText.Text = _localization.Format("WebViewInitializationFailed", ex.Message); }
 
-        if (!string.IsNullOrWhiteSpace(_initialDocumentPath))
+        if (_pendingPaths.Count > 0)
         {
-            await OpenDocumentsAsync([_initialDocumentPath]);
+            string[] paths = [.. _pendingPaths];
+            _pendingPaths.Clear();
+            await OpenDocumentsAsync(paths);
         }
+    }
+
+    // Called (on the UI thread) when the reader is launched again, e.g. by double-clicking a .md file: the files open as
+    // tabs here and the window comes to the front.
+    public async void OpenFromAnotherInstance(string[] paths)
+    {
+        if (_isClosing) return;
+        if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
+        Activate();
+        if (paths.Length == 0) return;
+        if (_readersReady) await OpenDocumentsAsync(paths);
+        else _pendingPaths.AddRange(paths);
     }
 
     private async void Window_Closing(object? sender, CancelEventArgs e)
@@ -155,8 +171,8 @@ public partial class MainWindow : Window
                 ShowOpenError(ex.Message);
             }
         }
+        // When nothing opened, the view is unchanged and the status bar keeps the error.
         if (lastTab is not null) await UpdatePanesAsync(() => _workspace.Activate(lastTab), reloadPane: _workspace.PaneOf(lastTab));
-        else RefreshView();
     }
 
     // A tab that is already visible only takes the focus; otherwise it replaces the document in the focused pane.
@@ -262,7 +278,16 @@ public partial class MainWindow : Window
     private void SyncScroll_Click(object sender, RoutedEventArgs e)
     {
         _settings.SyncScroll = SyncScrollButton.IsChecked == true;
+        UpdateSyncScrollButton();
         ApplyAndQueueSave();
+    }
+
+    // The icon shows the current state: a whole chain when synced, a broken one when not; dimmed in single view.
+    private void UpdateSyncScrollButton()
+    {
+        SyncLinkedIcon.Visibility = _settings.SyncScroll ? Visibility.Visible : Visibility.Collapsed;
+        SyncUnlinkedIcon.Visibility = _settings.SyncScroll ? Visibility.Collapsed : Visibility.Visible;
+        SyncScrollButton.Opacity = IsSplit ? 1 : 0.45;
     }
 
     private const double SplitterThickness = 5;
@@ -490,6 +515,7 @@ public partial class MainWindow : Window
         }
         SyncScrollButton.IsChecked = _settings.SyncScroll;
         SyncScrollButton.IsEnabled = IsSplit;
+        UpdateSyncScrollButton();
         _updatingControls = false;
         UpdateCustomColorControls();
     }
@@ -553,8 +579,7 @@ public partial class MainWindow : Window
         SplitVerticalButton.ToolTip = _localization.Get("SplitVertical");
         SplitHorizontalButton.ToolTip = _localization.Get("SplitHorizontal");
         PaneSplitter.ToolTip = _localization.Get("SplitterHint");
-        SyncScrollButton.Content = _localization.Get("SyncScroll");
-        SyncScrollButton.ToolTip = _localization.Get("SyncScrollHint");
+        SyncScrollButton.ToolTip = _localization.Get("SyncScroll");
         PrimaryPanePlaceholder.Text = SecondaryPanePlaceholder.Text = _localization.Get("PanePlaceholder");
         UpdateStatus();
         RebuildTabStrip();

@@ -44,7 +44,7 @@
                 <ComboBox x:Name="ThemeCombo" Width="88" SelectionChanged="SettingsControl_Changed">
                     <ComboBoxItem x:Name="ThemeSoftItem" Tag="soft">柔和</ComboBoxItem><ComboBoxItem x:Name="ThemeEyeItem" Tag="eye">護眼</ComboBoxItem><ComboBoxItem x:Name="ThemeLightItem" Tag="light">明亮</ComboBoxItem><ComboBoxItem x:Name="ThemeDarkItem" Tag="dark">深色</ComboBoxItem><ComboBoxItem x:Name="ThemeCustomItem" Tag="custom">自訂</ComboBoxItem>
                 </ComboBox>
-                <TextBlock x:Name="SplitLabel" Text="畫面" VerticalAlignment="Center" Margin="14,0,5,0" />
+                <TextBlock x:Name="SplitLabel" Text="顯示" VerticalAlignment="Center" Margin="14,0,5,0" />
                 <Button x:Name="SplitNoneButton" ToolTip="單一畫面" Tag="none" Click="SplitMode_Click" Padding="7,4" Margin="0,0,3,0">
                     <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="18" Height="16" BorderBrush="#1E365B" BorderThickness="1.6" CornerRadius="1.5"/></Canvas></Viewbox>
                 </Button>
@@ -54,7 +54,9 @@
                 <Button x:Name="SplitHorizontalButton" ToolTip="上下並排" Tag="horizontal" Click="SplitMode_Click" Padding="7,4" Margin="0,0,6,0">
                     <Viewbox Width="18" Height="16"><Canvas Width="18" Height="16"><Border Width="18" Height="16" BorderBrush="#1E365B" BorderThickness="1.6" CornerRadius="1.5"/><Border Width="18" Height="1.6" Background="#1E365B" Canvas.Top="7.2"/></Canvas></Viewbox>
                 </Button>
-                <ToggleButton x:Name="SyncScrollButton" Content="同步捲動" ToolTip="兩側一起捲動相同的距離" Click="SyncScroll_Click" Padding="8,3" VerticalAlignment="Center" />
+                <ToggleButton x:Name="SyncScrollButton" ToolTip="同步捲動" ToolTipService.ShowOnDisabled="True" Click="SyncScroll_Click" Padding="7,4">
+                    <Grid><Viewbox x:Name="SyncLinkedIcon" Width="18" Height="16"><Canvas Width="27" Height="24"><Path Stroke="#1E365B" StrokeThickness="2.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="M2.5,2.5 L2.5,21.5 M0.3,4.7 L2.5,2.5 L4.7,4.7 M0.3,19.3 L2.5,21.5 L4.7,19.3 M24.5,2.5 L24.5,21.5 M22.3,4.7 L24.5,2.5 L26.7,4.7 M22.3,19.3 L24.5,21.5 L26.7,19.3"/><Rectangle Canvas.Left="6" Canvas.Top="8.75" Width="7" Height="6.5" RadiusX="3.25" RadiusY="3.25" Stroke="#1E365B" StrokeThickness="2"/><Rectangle Canvas.Left="14" Canvas.Top="8.75" Width="7" Height="6.5" RadiusX="3.25" RadiusY="3.25" Stroke="#1E365B" StrokeThickness="2"/><Rectangle Canvas.Left="10.5" Canvas.Top="10.75" Width="6" Height="2.5" RadiusX="1.25" RadiusY="1.25" Stroke="#1E365B" StrokeThickness="2"/></Canvas></Viewbox><Viewbox x:Name="SyncUnlinkedIcon" Width="18" Height="16" Visibility="Collapsed"><Canvas Width="27" Height="24"><Rectangle Canvas.Left="11" Canvas.Top="7.5" Width="5" Height="9" RadiusX="1.5" RadiusY="1.5" Fill="#FBE3E3"/><Path Stroke="#1E365B" StrokeThickness="2.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="M2.5,2.5 L2.5,21.5 M0.3,4.7 L2.5,2.5 L4.7,4.7 M0.3,19.3 L2.5,21.5 L4.7,19.3 M24.5,2.5 L24.5,21.5 M22.3,4.7 L24.5,2.5 L26.7,4.7 M22.3,19.3 L24.5,21.5 L26.7,19.3"/><Rectangle Canvas.Left="5.5" Canvas.Top="8.75" Width="6" Height="6.5" RadiusX="3.25" RadiusY="3.25" Stroke="#1E365B" StrokeThickness="2"/><Rectangle Canvas.Left="15.5" Canvas.Top="8.75" Width="6" Height="6.5" RadiusX="3.25" RadiusY="3.25" Stroke="#1E365B" StrokeThickness="2"/><Path Stroke="#E07070" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M13.5,4.5 L13.5,7 M13.5,17 L13.5,19.5 M10.8,5.6 L11.8,7.2 M16.2,5.6 L15.2,7.2 M10.8,18.4 L11.8,16.8 M16.2,18.4 L15.2,16.8"/></Canvas></Viewbox></Grid>
+                </ToggleButton>
             </WrapPanel>
         </Border>
         <Border x:Name="CustomColorPanel" DockPanel.Dock="Top" Padding="10,6" Background="#FAFAFA" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Visibility="Collapsed">
