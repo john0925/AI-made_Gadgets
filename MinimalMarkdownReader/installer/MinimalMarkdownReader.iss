@@ -1,5 +1,5 @@
 #define MyAppName "MinimalMarkdownReader"
-#define MyAppVersion "1.0.6"
+#define MyAppVersion "1.1.0"
 #define MyAppExeName "MinimalMarkdownReader.exe"
 #define MyMarkdownProgId "MinimalMarkdownReader.Markdown"
 
