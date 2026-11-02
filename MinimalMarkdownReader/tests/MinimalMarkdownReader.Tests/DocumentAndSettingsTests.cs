@@ -26,6 +26,18 @@ public sealed class DocumentAndSettingsTests : IDisposable
         await Assert.ThrowsAsync<ArgumentException>(() => new DocumentService().LoadAsync(path));
     }
 
+    [Theory]
+    [InlineData(@"C:\docs\readme.md", true)]
+    [InlineData(@"C:\docs\README.MARKDOWN", true)]
+    [InlineData(@"C:\docs\notes.txt", false)]
+    [InlineData(@"C:\docs\image.png", false)]
+    [InlineData(@"C:\docs\readme.md.exe", false)]
+    [InlineData(@"C:\docs\folder", false)]
+    [InlineData("", false)]
+    [InlineData(null, false)]
+    public void IsMarkdownPath_AcceptsOnlyMarkdownExtensions(string? path, bool expected) =>
+        Assert.Equal(expected, DocumentService.IsMarkdownPath(path));
+
     [Fact]
     public void TryResolveRelativeImage_AllowsOnlyFilesBelowDocumentDirectory()
     {

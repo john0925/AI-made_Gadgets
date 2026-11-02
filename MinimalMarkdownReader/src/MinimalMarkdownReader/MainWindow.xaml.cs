@@ -31,6 +31,8 @@ public partial class MainWindow : Window
     private bool _isClosing;
     // Files from the command line or another instance that arrive before WebView2 is ready.
     private readonly List<string> _pendingPaths = [];
+    // Installed fonts with the names stored in each font, so the list can be relabelled when the UI language changes.
+    private List<(string Source, IReadOnlyDictionary<string, string> NamesByTag)> _installedFonts = [];
 
     public MainWindow(IEnumerable<string>? initialPaths = null)
     {
@@ -45,10 +47,13 @@ public partial class MainWindow : Window
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        FontFamilyCombo.ItemsSource = Fonts.SystemFontFamilies.OrderBy(font => font.Source);
+        _installedFonts = Fonts.SystemFontFamilies
+            .Select(font => (font.Source, (IReadOnlyDictionary<string, string>)font.FamilyNames.ToDictionary(name => name.Key.IetfLanguageTag, name => name.Value)))
+            .ToList();
         _settings = await _settingsService.LoadAsync();
         _settings.SplitMode = "none";
         _settings.UiLanguage = _localization.SetLanguage(_settings.UiLanguage);
+        RefreshFontChoices();
         ApplyLocalizedText();
         ApplySplitLayout();
         RefreshView();
@@ -122,9 +127,14 @@ public partial class MainWindow : Window
         if (dialog.ShowDialog(this) == true) await OpenDocumentsAsync(dialog.FileNames);
     }
 
+    // Only Markdown files are taken from a drop; a drop with none of them is ignored.
+    private static string[] DroppedMarkdownPaths(DragEventArgs e) =>
+        e.Data.GetData(DataFormats.FileDrop) is string[] paths ? [.. paths.Where(DocumentService.IsMarkdownPath)] : [];
+
     private async void Window_Drop(object sender, DragEventArgs e)
     {
-        if (e.Data.GetData(DataFormats.FileDrop) is not string[] paths || paths.Length == 0) return;
+        var paths = DroppedMarkdownPaths(e);
+        if (paths.Length == 0) return;
         // A drop on one side of a split view opens the files on that side.
         foreach (var pane in Panes)
         {
@@ -137,7 +147,7 @@ public partial class MainWindow : Window
 
     private void Window_DragOver(object sender, DragEventArgs e)
     {
-        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Effects = DroppedMarkdownPaths(e).Length > 0 ? DragDropEffects.Copy : DragDropEffects.None;
         e.Handled = true;
     }
 
@@ -391,7 +401,9 @@ public partial class MainWindow : Window
     {
         if (sender is not MenuItem { Tag: string language }) return;
         _settings.UiLanguage = _localization.SetLanguage(language);
+        RefreshFontChoices();
         ApplyLocalizedText();
+        SetControlsFromSettings();
         ApplyAndQueueSave();
     }
 
@@ -431,7 +443,7 @@ public partial class MainWindow : Window
     {
         if (!_controlsReady || _updatingControls) return;
         var layout = CurrentLayout with { FontSize = (int)Math.Round(FontSizeSlider.Value), LineHeight = Math.Round(LineHeightSlider.Value, 1) };
-        if (sender == FontFamilyCombo && FontFamilyCombo.SelectedItem is FontFamily font) layout = layout with { FontFamily = font.Source };
+        if (sender == FontFamilyCombo && FontFamilyCombo.SelectedItem is FontChoice font) layout = layout with { FontFamily = font.Source };
         SetCurrentLayout(layout);
         if (ThemeCombo.SelectedItem is ComboBoxItem theme) _settings.Theme = (string)theme.Tag;
         FontSizeText.Text = layout.FontSize.ToString();
@@ -498,11 +510,19 @@ public partial class MainWindow : Window
         _saveTimer.Start();
     }
 
+    // Lists the fonts under their names in the UI language; the caller reselects the current font.
+    private void RefreshFontChoices()
+    {
+        _updatingControls = true;
+        FontFamilyCombo.ItemsSource = FontNames.Build(_installedFonts, _localization.CurrentLanguage);
+        _updatingControls = false;
+    }
+
     private void SetControlsFromSettings()
     {
         _updatingControls = true;
         var layout = CurrentLayout;
-        FontFamilyCombo.SelectedItem = ((IEnumerable<FontFamily>)FontFamilyCombo.ItemsSource).FirstOrDefault(font => font.Source.Equals(layout.FontFamily, StringComparison.OrdinalIgnoreCase));
+        FontFamilyCombo.SelectedItem = ((IEnumerable<FontChoice>)FontFamilyCombo.ItemsSource).FirstOrDefault(font => font.Source.Equals(layout.FontFamily, StringComparison.OrdinalIgnoreCase));
         FontSizeSlider.Value = layout.FontSize;
         LineHeightSlider.Value = layout.LineHeight;
         SetThemeSelection();

@@ -84,7 +84,8 @@ public sealed class ReaderService
         e.Response = _webView.CoreWebView2.Environment.CreateWebResourceResponse(null, 403, "Forbidden", "");
     }
 
-    // Only the reader's own NavigateToString load may navigate the page; HTTP(S) links go to the default browser and everything else is dropped.
+    // Only the reader's own NavigateToString load may navigate the page; HTTP(S) links go to the default browser, a dropped
+    // Markdown file is raised as FileDropped, and everything else (including other dropped files) is dropped silently.
     private void OnNavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
     {
         if (_expectingDocumentNavigation && ReaderPage.IsDocumentNavigation(e.Uri))
@@ -94,7 +95,7 @@ public sealed class ReaderService
         }
         e.Cancel = true;
         if (ExternalLinks.TryGetWebUri(e.Uri, out var uri)) ExternalLinks.Open(uri);
-        else if (Uri.TryCreate(e.Uri, UriKind.Absolute, out var fileUri) && fileUri.IsFile) FileDropped?.Invoke(this, fileUri.LocalPath);
+        else if (Uri.TryCreate(e.Uri, UriKind.Absolute, out var fileUri) && fileUri.IsFile && DocumentService.IsMarkdownPath(fileUri.LocalPath)) FileDropped?.Invoke(this, fileUri.LocalPath);
     }
 
     private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)

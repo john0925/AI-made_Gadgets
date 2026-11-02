@@ -9,9 +9,11 @@ public sealed class DocumentService
     private static readonly HashSet<string> MarkdownExtensions = new(StringComparer.OrdinalIgnoreCase) { ".md", ".markdown" };
     private static readonly HashSet<string> ImageExtensions = new(StringComparer.OrdinalIgnoreCase) { ".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp" };
 
+    public static bool IsMarkdownPath(string? path) => !string.IsNullOrWhiteSpace(path) && MarkdownExtensions.Contains(Path.GetExtension(path));
+
     public async Task<MarkdownDocument> LoadAsync(string path)
     {
-        if (string.IsNullOrWhiteSpace(path) || !MarkdownExtensions.Contains(Path.GetExtension(path)))
+        if (!IsMarkdownPath(path))
             throw new ArgumentException(LocalizationService.Instance.Get("InvalidFileType"), nameof(path));
         var fullPath = Path.GetFullPath(path);
         if (!File.Exists(fullPath)) throw new FileNotFoundException(LocalizationService.Instance.Get("FileNotFound"), fullPath);
