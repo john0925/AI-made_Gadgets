@@ -66,4 +66,10 @@
   <data name="PaneTop" xml:space="preserve"><value>T</value></data>
   <data name="PaneBottom" xml:space="preserve"><value>B</value></data>
   <data name="SyncScroll" xml:space="preserve"><value>Sync scroll</value></data>
+  <data name="CheckForUpdates" xml:space="preserve"><value>Check for updates</value></data>
+  <data name="CheckingForUpdates" xml:space="preserve"><value>Checking for updates…</value></data>
+  <data name="UpdateAvailable" xml:space="preserve"><value>Version {0} is available (you have {1}).</value></data>
+  <data name="OpenDownloadPage" xml:space="preserve"><value>Open the download page?</value></data>
+  <data name="UpToDate" xml:space="preserve"><value>You have the latest version ({0}).</value></data>
+  <data name="UpdateCheckFailed" xml:space="preserve"><value>Could not check for updates: {0}</value></data>
 </root>

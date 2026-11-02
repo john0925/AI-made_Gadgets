@@ -13,7 +13,7 @@ MinimalMarkdownReader 是 Windows 10/11 x64 的唯讀 Markdown 閱讀器，可�
 - 支援自訂背景色與本文色，並將主題、顏色、預設版面、並排比例、同步捲動與介面語言保存至 `%LOCALAPPDATA%\MinimalMarkdownReader\settings.json`。首次啟動時會讀取舊版 MarkdownReader 的設定檔。
 - 顯示文件目錄內的相對 PNG、JPG、GIF、WebP、BMP 圖片；限制圖片不得跳脫文件目錄。
 - 外部 HTTP(S) 連結會交給預設瀏覽器開啟。
-- 點擊工具列的三橫線選單可開啟文件、切換繁體中文／English，以及查看關於資訊（依介面語言顯示繁體中文或英文，含可點擊的 GitHub 專案與下載連結）。語言選擇會保存並在下次啟動時套用。
+- 點擊工具列的三橫線選單可開啟文件、切換繁體中文／English、檢查新版本，以及查看關於資訊（依介面語言顯示繁體中文或英文，含可點擊的 GitHub 專案與下載連結）。語言選擇會保存並在下次啟動時套用。
 
 ## 需求與執行
 
@@ -63,6 +63,8 @@ dotnet restore MinimalMarkdownReader.sln --runtime win-x64
 dotnet publish src/MinimalMarkdownReader/MinimalMarkdownReader.csproj -c Release -r win-x64 --self-contained true --no-restore --output artifacts/publish
 & "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" installer/MinimalMarkdownReader.iss
 ```
+
+- 檢查新版本：☰「檢查新版本」會連到 GitHub Releases 比對版本；有新版本時詢問是否開啟下載頁面，否則告知目前已是最新版本。只在點選時連線，不會自動檢查或自動下載。
 
 各版本變更請見 [CHANGELOG.md](CHANGELOG.md)。
 

@@ -407,6 +407,33 @@ public partial class MainWindow : Window
         ApplyAndQueueSave();
     }
 
+    // Asks GitHub Releases for a newer version and reports the result; nothing is checked automatically.
+    private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        var title = _localization.Get("CheckForUpdates");
+        var current = UpdateService.CurrentVersion;
+        MenuCheckForUpdatesItem.IsEnabled = false;
+        StatusText.Text = _localization.Get("CheckingForUpdates");
+        try
+        {
+            var latest = await UpdateService.GetLatestVersionAsync();
+            UpdateStatus();
+            if (latest is not null && latest > current)
+            {
+                var message = _localization.Format("UpdateAvailable", latest, current) + "\n\n" + _localization.Get("OpenDownloadPage");
+                if (MessageBox.Show(this, message, title, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                    ExternalLinks.Open(UpdateService.ReleasePage(latest));
+            }
+            else MessageBox.Show(this, _localization.Format("UpToDate", current), title, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
+        {
+            UpdateStatus();
+            MessageBox.Show(this, _localization.Format("UpdateCheckFailed", ex.Message), title, MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+        finally { MenuCheckForUpdatesItem.IsEnabled = true; }
+    }
+
     private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
     {
         var content = LocalizationService.ReadLocalizedResource("about", ".md", _localization.CurrentLanguage);
@@ -572,6 +599,7 @@ public partial class MainWindow : Window
         MenuTraditionalChineseItem.IsChecked = _localization.CurrentLanguage == "zh-Hant";
         MenuEnglishItem.Header = _localization.Get("English");
         MenuEnglishItem.IsChecked = _localization.CurrentLanguage == "en";
+        MenuCheckForUpdatesItem.Header = _localization.Get("CheckForUpdates");
         MenuAboutItem.Header = _localization.Get("About");
         TextAlignmentLabel.Text = _localization.Get("TextAlignment");
         AlignLeftButton.ToolTip = _localization.Get("AlignLeft");

@@ -7,6 +7,8 @@
     <ApplicationIcon>Assets\MinimalMarkdownReader.ico</ApplicationIcon>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+    <!-- Release version; keep in step with installer/MinimalMarkdownReader.iss and about*.md (a test checks this). -->
+    <Version>1.1.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.41.3" />
